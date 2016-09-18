@@ -35,7 +35,7 @@ public class Utils {
             try {
                 Scanner scanner = new Scanner(new File(fileName),"Utf-8");
                 data= Pattern.compile("\\p{javaWhitespace}+").split(scanner.useDelimiter(Pattern.compile("\\A")).next());
-                this.filename = filename;
+                this.filename = fileName;
             } catch (FileNotFoundException fnfe){
                 System.out.println("\n\n#\n#\n# Fant ingen ord!\n# Sannsynlig problem: Filen shakespeare.txt mangler\n#\n#\n");
                 data =  new String[]{null};

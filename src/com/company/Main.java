@@ -14,8 +14,12 @@ public class Main {
             Dedup.arrayListDedup(sample);
             out.addMeasurement(size,timer.elapsedTime());
         }*/
+      /*
         String shakespearePath = "/root/IdeaProjects/Deduplicate/src/com/company/shakespeare.txt";
         DedupTest test = new DedupTest(shakespearePath);
         test.run();
+        */
+
+      //Innlevering1 innlevering1 = new Innlevering1(args);
     }
 }
