@@ -141,7 +141,7 @@ public class Innlevering1 {
                     avgTime,
                     v1(avgTime, size),
                     v2(avgTime, size, uniquesSize),
-                    v3(avgTime, size, uniquesSize));
+                    v3(avgTime, size));
         }
         System.out.println();
     }
@@ -167,8 +167,8 @@ public class Innlevering1 {
         return (time / problemSize * resultSize);
     }
 
-    private static long v3(long time, int problemSize, int resultSize){
-        return (long) (time / Math.log(resultSize) * problemSize);
+    private static long v3(long time, int problemSize){
+        return (long) (time / Math.log(problemSize) * problemSize);
     }
 
     /*
