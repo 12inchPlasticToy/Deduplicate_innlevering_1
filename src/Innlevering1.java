@@ -115,19 +115,17 @@ public class Innlevering1 {
 
         // Main loop
         for (int size = lo; size <= hi; size += step) {
+            System.out.print(".");
             String[] uniques = sample.get(size);
 
             long avgTime = 0;   // store a median time for each sample size
             String[] withoutDupes = dedup.dedup(uniques);
 
             for(int i = 0; i < runsPerSampleSize; i++){
-
-                // Copying the original sample to keep it from being affected
-                String[] testList = uniques;
-
+                
                 /* Do test while measuring the time */
                 timer = new Utils.Stopwatch();
-                withoutDupes = dedup.dedup(testList);
+                withoutDupes = dedup.dedup(uniques);
                 long elapsedTime = timer.elapsedTime();
                 avgTime += elapsedTime;
             }
@@ -145,6 +143,7 @@ public class Innlevering1 {
                     v2(avgTime, size, uniquesSize),
                     v3(avgTime, size, uniquesSize));
         }
+        System.out.println();
     }
 
     private static PrintStream getFile(String fileName){
