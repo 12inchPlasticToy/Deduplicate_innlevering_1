@@ -56,35 +56,26 @@ public class Innlevering1 {
             }
         }
 
-        /*
-        samplers = new Utils.Sampler[args.length];
-        for (int i = 0; i < args.length; i++) {
-            samplers[i] = new Utils.Sampler(args[i]);
-        }
-
-        for(Utils.Sampler sample : samplers){
-            for(Dedup dedup : dedups){
-                runAlgorithm(sample, dedup);
-            }
-        }
-        */
-
     }
 
     private static void warmUp() {
+        System.out.println("Starting warmUp()...");
+
         String[] dummyArray = new String[1000];
-        for (int i = 0; i < dummyArray.length; i++) {
+        for (int i = 0; i < dummyArray.length - 1; i += 2) {
             dummyArray[i] = "" + i;
+            dummyArray[i + 1] = "" + i;
         }
         timer = new Utils.Stopwatch();
         timer.start();
         dedups[1].dedup(dummyArray);
         long endOfDummyRun = timer.elapsedTime();
+        
+        System.out.println("warm-up finished.");
     }
 
     private static PrintStream createFile(String inputFileName, String algorithmName){
-        // Output to 'Algorithm - Classname.csv'
-        //TODO: fix bug that won't allow for the filename to work unless 'null'
+
         String outputFilename =
                 String.format("%s - %s.csv", algorithmName, inputFileName);
 
