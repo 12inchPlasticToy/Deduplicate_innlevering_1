@@ -1,6 +1,7 @@
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 /**
  * 0?) start the program by running a "warm up"
@@ -9,11 +10,15 @@ import java.time.LocalDateTime;
  * 3) output each row as follow to a file in csv format:
  *         sampleSize, runTime, v1, v2, v3,
  *         where:
- *              v1 = time / sampleSize >> looks like purely empirical analysis?
+ *              v1 = time / sampleSize
  *              v2 = time / sampleSize * resultSize
  *              v3 = time / (log(sampleSize) * sampleSize)
  *
- * 4) make a graph for word inputs, as well as numbers >> sorted, sorted in reverse, unsorted.
+ *  N = sampleSize
+ *  f(n) = dedup(N)
+ *  T(N) = T(f(n)) = time
+ *
+ * 4) make a graph for word inputs
  *
  *
  * @author Clément Marescaux
@@ -25,10 +30,13 @@ public class Innlevering1 {
     private static final Dedup[] dedups =
             new Dedup[]{
                     Dedup.newBasicDedup(),
+                    /*
+                    Dedup.newArrayListDedup(),
+                    Dedup.newSortDedup(),
+                    Dedup.newTreeSetDedup(),
+                    */
                     Dedup.newHashSetDedup()
             };
-
-    // Alternative to measure time (use System.nanoTime())
     private static long sysTimer;
 
     public static void main(String[] args) {
@@ -38,12 +46,11 @@ public class Innlevering1 {
             System.exit(0);
         }
 
-        //dummy run
         warmUp();
 
         for(String filename : args){
             for( Dedup dedup : dedups){
-                runAlgorithm(new Utils.Sampler(filename), dedup);
+                run(new Utils.Sampler(filename), dedup);
             }
         }
     }
@@ -57,14 +64,25 @@ public class Innlevering1 {
             dummyArray[i + 1] = "" + i;
         }
         sysTimer = System.nanoTime();
+        dedups[0].dedup(dummyArray);
         dedups[1].dedup(dummyArray);
         sysTimer = System.nanoTime() - sysTimer;
 
         System.out.println("warm-up finished.");
     }
 
+    /**
+     * Core method for the exercise. Most of it is a copy from dedupTest and
+     * Utils with customisations.
+     * Writes to a text file the benchmark results of a deduplication algorithm
+     * processing random elements from a file sample of increasing size over
+     * each iteration.
+     *
+     * @param sample the sampled file used to provide random data
+     * @param dedup  the algorithm used to deduplicate abovementioned data;
+     */
 
-    private static void runAlgorithm(Utils.Sampler sample, Dedup dedup) {
+    private static void run(Utils.Sampler sample, Dedup dedup) {
 
         String inputFileName = sample.getFilename();
         String algorithmName = dedup.getClass().getSimpleName().toLowerCase();
@@ -87,7 +105,10 @@ public class Innlevering1 {
             System.out.print(".");
             String[] uniques = sample.get(size);
 
-            long avgTime = 0;   // store an average time for each sample size
+            //long avgTime = 0;   // store an average time for each sample size
+            //testing....
+            long[] times = new long[runsPerSampleSize];
+
             String[] withoutDupes = dedup.dedup(uniques);
 
             for(int i = 0; i < runsPerSampleSize; i++){
@@ -95,30 +116,40 @@ public class Innlevering1 {
                 sysTimer = System.nanoTime();
                 withoutDupes = dedup.dedup(uniques);
                 long elapsedTime = System.nanoTime() - sysTimer;
-                avgTime += elapsedTime;
+                //avgTime += elapsedTime;
+                //testing...
+                times[i] = elapsedTime;
+
             }
 
-            avgTime /= runsPerSampleSize;
+            //avgTime /= runsPerSampleSize;
             int uniquesSize = withoutDupes.length;
+
+            //Testing...
+            Arrays.sort(times);
+            long medianTime = (runsPerSampleSize % 2 == 0) ?
+                    times[times.length / 2] / 2 + times[(times.length / 2) - 1] / 2 :
+                    times[times.length / 2];
 
             /* Write measurement to output */
             output.printf("%d,%d,%d,%d,%d\n",
                     size,
-                    avgTime,
-                    v1(avgTime, size),
-                    v2(avgTime, size, uniquesSize),
-                    v3(avgTime, size));
+                    medianTime,
+                    v1(medianTime, size),
+                    v2(medianTime, size, uniquesSize),
+                    v3(medianTime, size));
         }
         output.close();
         System.out.println();
     }
 
     /**
-     * Creates the output for the results of an algorithm on a given input file.
+     * Creates a file to save benchmark results and returns
+     * that file's printStream
      *
-     * @param inputFileName
-     * @param algorithmName
-     * @return a PrintStream.
+     * @param inputFileName the name of the sampled file
+     * @param algorithmName the name of the algorithm
+     * @return the file's printStream.
      */
     private static PrintStream createFile(String inputFileName, String algorithmName) {
 
@@ -151,5 +182,6 @@ public class Innlevering1 {
     private static long v3(long time, int problemSize){
         return (long) (time / Math.log(problemSize) * problemSize);
     }
+
 
 }
