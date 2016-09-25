@@ -143,9 +143,9 @@ public interface Dedup {
  *
  */
 class BasicDedup implements Dedup {
-    public String[] dedup(String[] strings){
-        int count = 0; 
-        for(String current: strings){
+    public String[] dedup(String[] strings) { // definition of n -> strings
+        int count = 0; // runs once
+        for (String current : strings) { // loop runs n times
             if(isDuplicate(strings,count,current))
                 continue;
             else
@@ -155,7 +155,7 @@ class BasicDedup implements Dedup {
     }
 
     private boolean isDuplicate(Object[] objects, int len, Object obj){
-        for(int i = 0; i < len; i++)
+        for (int i = 0; i < len; i++) // inner loop
             if(obj.equals(objects[i]))
                 return true;
         return false;
